@@ -1,0 +1,836 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/gouvernorats_1.js"></script>
+        <script src="data/donne_wgs_2.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        })
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+            if (bounds_group.getLayers().length) {
+                map.fitBounds(bounds_group.getBounds());
+            }
+        }
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            opacity: 1.0,
+            attribution: '',
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        function pop_gouvernorats_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td>' + (feature.properties['OBJECTID'] !== null ? Autolinker.link(String(feature.properties['OBJECTID'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">GOUV_FR</th>\
+                        <td>' + (feature.properties['GOUV_FR'] !== null ? Autolinker.link(String(feature.properties['GOUV_FR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['GOUV_AR'] !== null ? Autolinker.link(String(feature.properties['GOUV_AR'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">KM2</th>\
+                        <td>' + (feature.properties['KM2'] !== null ? Autolinker.link(String(feature.properties['KM2'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">TEST</th>\
+                        <td>' + (feature.properties['TEST'] !== null ? Autolinker.link(String(feature.properties['TEST'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Shape_Leng</th>\
+                        <td>' + (feature.properties['Shape_Leng'] !== null ? Autolinker.link(String(feature.properties['Shape_Leng'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Shape_Area</th>\
+                        <td>' + (feature.properties['Shape_Area'] !== null ? Autolinker.link(String(feature.properties['Shape_Area'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_gouvernorats_1_0(feature) {
+            switch(String(feature.properties['GOUV_FR'])) {
+                case 'ARIANA':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(215,25,28,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'BEJA':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(222,50,39,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'BEN AROUS':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(228,74,51,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'BIZERTE':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,99,62,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'GABES':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(241,124,74,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'GAFSA':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(247,149,85,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'JENDOUBA':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(253,174,97,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'KAIROUAN':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,188,113,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'KASSERINE':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,201,128,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'KEBILI':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(254,215,144,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'KEF':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,228,160,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'MAHDIA':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,242,176,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'MANOUBA':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(255,255,191,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'MEDENINE':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(241,249,198,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'MONASTIR':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(227,243,205,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'NABEUL':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(213,236,212,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SFAX':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(199,230,219,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SIDI BOUZID':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(185,224,226,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SILIANA':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(171,217,233,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'SOUSSE':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(150,202,225,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'TATAOUINE':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(129,186,216,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'TOZEUR':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(107,170,208,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'TUNIS':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(86,154,199,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'ZAGHOUAN':
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(65,139,191,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_gouvernorats_1',
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0, 
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(44,123,182,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_gouvernorats_1');
+        map.getPane('pane_gouvernorats_1').style.zIndex = 401;
+        map.getPane('pane_gouvernorats_1').style['mix-blend-mode'] = 'normal';
+        var layer_gouvernorats_1 = new L.geoJson(json_gouvernorats_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_gouvernorats_1',
+            layerName: 'layer_gouvernorats_1',
+            pane: 'pane_gouvernorats_1',
+            onEachFeature: pop_gouvernorats_1,
+            style: style_gouvernorats_1_0,
+        });
+        bounds_group.addLayer(layer_gouvernorats_1);
+        map.addLayer(layer_gouvernorats_1);
+        function pop_donne_wgs_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (i in e.target._eventParents) {
+                        e.target._eventParents[i].resetStyle(e.target);
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['NÃ¸'] !== null ? Autolinker.link(String(feature.properties['NÃ¸'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">longitude</th>\
+                        <td>' + (feature.properties['longitude'] !== null ? Autolinker.link(String(feature.properties['longitude'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">latitude</th>\
+                        <td>' + (feature.properties['latitude'] !== null ? Autolinker.link(String(feature.properties['latitude'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['latitude_1'] !== null ? Autolinker.link(String(feature.properties['latitude_1'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nom_de_Soc</th>\
+                        <td>' + (feature.properties['Nom_de_Soc'] !== null ? Autolinker.link(String(feature.properties['Nom_de_Soc'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Date_de_cr</th>\
+                        <td>' + (feature.properties['Date_de_cr'] !== null ? Autolinker.link(String(feature.properties['Date_de_cr'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">IRH_de_for</th>\
+                        <td>' + (feature.properties['IRH_de_for'] !== null ? Autolinker.link(String(feature.properties['IRH_de_for'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Profondeur</th>\
+                        <td>' + (feature.properties['Profondeur'] !== null ? Autolinker.link(String(feature.properties['Profondeur'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Profonde_1</th>\
+                        <td>' + (feature.properties['Profonde_1'] !== null ? Autolinker.link(String(feature.properties['Profonde_1'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Production</th>\
+                        <td>' + (feature.properties['Production'] !== null ? Autolinker.link(String(feature.properties['Production'])) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Situation</th>\
+                        <td>' + (feature.properties['Situation'] !== null ? Autolinker.link(String(feature.properties['Situation'])) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_donne_wgs_2_0() {
+            return {
+                pane: 'pane_donne_wgs_2',
+                radius: 4.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(51,243,38,1.0)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_donne_wgs_2');
+        map.getPane('pane_donne_wgs_2').style.zIndex = 402;
+        map.getPane('pane_donne_wgs_2').style['mix-blend-mode'] = 'normal';
+        var layer_donne_wgs_2 = new L.geoJson(json_donne_wgs_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_donne_wgs_2',
+            layerName: 'layer_donne_wgs_2',
+            pane: 'pane_donne_wgs_2',
+            onEachFeature: pop_donne_wgs_2,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_donne_wgs_2_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_donne_wgs_2);
+        map.addLayer(layer_donne_wgs_2);
+        var osmGeocoder = new L.Control.Geocoder({
+            collapsed: true,
+            position: 'topleft',
+            text: 'Search',
+            title: 'Testing'
+        }).addTo(map);
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .className += ' fa fa-search';
+        document.getElementsByClassName('leaflet-control-geocoder-icon')[0]
+        .title += 'Search for a place';
+        var baseMaps = {};
+        L.control.layers(baseMaps,{'<img src="legend/donne_wgs_2.png" /> donnée_wgs': layer_donne_wgs_2,'gouvernorats<br /><table><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_ARIANA0.png" /></td><td>ARIANA</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_BEJA1.png" /></td><td>BEJA</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_BENAROUS2.png" /></td><td>BEN AROUS</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_BIZERTE3.png" /></td><td>BIZERTE</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_GABES4.png" /></td><td>GABES</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_GAFSA5.png" /></td><td>GAFSA</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_JENDOUBA6.png" /></td><td>JENDOUBA</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_KAIROUAN7.png" /></td><td>KAIROUAN</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_KASSERINE8.png" /></td><td>KASSERINE</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_KEBILI9.png" /></td><td>KEBILI</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_KEF10.png" /></td><td>KEF</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_MAHDIA11.png" /></td><td>MAHDIA</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_MANOUBA12.png" /></td><td>MANOUBA</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_MEDENINE13.png" /></td><td>MEDENINE</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_MONASTIR14.png" /></td><td>MONASTIR</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_NABEUL15.png" /></td><td>NABEUL</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_SFAX16.png" /></td><td>SFAX</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_SIDIBOUZID17.png" /></td><td>SIDI BOUZID</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_SILIANA18.png" /></td><td>SILIANA</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_SOUSSE19.png" /></td><td>SOUSSE</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_TATAOUINE20.png" /></td><td>TATAOUINE</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_TOZEUR21.png" /></td><td>TOZEUR</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_TUNIS22.png" /></td><td>TUNIS</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_ZAGHOUAN23.png" /></td><td>ZAGHOUAN</td></tr><tr><td style="text-align: center;"><img src="legend/gouvernorats_1_24.png" /></td><td></td></tr></table>': layer_gouvernorats_1,"Google Satellite": layer_GoogleSatellite_0,},{collapsed:false}).addTo(map);
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"GOUV_FR": "str","NÃ¸": "str","Date_de_cr": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  for (option in Array.from(
+                    document.getElementById(
+                      "sel_" + key).selectedOptions)){
+                    selection.push(
+                      document.getElementById("sel_"+key)
+                      .selectedOptions[option].value);
+                    }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int" || Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + key).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_GOUV_FR = document.createElement('div');
+            div_GOUV_FR.id = "div_GOUV_FR";
+            div_GOUV_FR.className= "filterselect";
+            document.getElementById("menu").appendChild(div_GOUV_FR);
+            sel_GOUV_FR = document.createElement('select');
+            sel_GOUV_FR.multiple = true;
+            sel_GOUV_FR.id = "sel_GOUV_FR";
+            var GOUV_FR_options_str = "<option value='' unselected></option>";
+            sel_GOUV_FR.onchange = function(){filterFunc()};
+            GOUV_FR_options_str  += '<option value="BEJA">BEJA</option>';
+            GOUV_FR_options_str  += '<option value="ARIANA">ARIANA</option>';
+            GOUV_FR_options_str  += '<option value="JENDOUBA">JENDOUBA</option>';
+            GOUV_FR_options_str  += '<option value="MANOUBA">MANOUBA</option>';
+            GOUV_FR_options_str  += '<option value="TUNIS">TUNIS</option>';
+            GOUV_FR_options_str  += '<option value="BEN AROUS">BEN AROUS</option>';
+            GOUV_FR_options_str  += '<option value="ZAGHOUAN">ZAGHOUAN</option>';
+            GOUV_FR_options_str  += '<option value="SILIANA">SILIANA</option>';
+            GOUV_FR_options_str  += '<option value="KEF">KEF</option>';
+            GOUV_FR_options_str  += '<option value="SOUSSE">SOUSSE</option>';
+            GOUV_FR_options_str  += '<option value="KAIROUAN">KAIROUAN</option>';
+            GOUV_FR_options_str  += '<option value="MONASTIR">MONASTIR</option>';
+            GOUV_FR_options_str  += '<option value="KASSERINE">KASSERINE</option>';
+            GOUV_FR_options_str  += '<option value="MAHDIA">MAHDIA</option>';
+            GOUV_FR_options_str  += '<option value="SIDI BOUZID">SIDI BOUZID</option>';
+            GOUV_FR_options_str  += '<option value="GAFSA">GAFSA</option>';
+            GOUV_FR_options_str  += '<option value="TOZEUR">TOZEUR</option>';
+            GOUV_FR_options_str  += '<option value="GABES">GABES</option>';
+            GOUV_FR_options_str  += '<option value="KEBILI">KEBILI</option>';
+            GOUV_FR_options_str  += '<option value="TATAOUINE">TATAOUINE</option>';
+            GOUV_FR_options_str  += '<option value="BIZERTE">BIZERTE</option>';
+            GOUV_FR_options_str  += '<option value="NABEUL">NABEUL</option>';
+            GOUV_FR_options_str  += '<option value="SFAX">SFAX</option>';
+            GOUV_FR_options_str  += '<option value="MEDENINE">MEDENINE</option>';
+            sel_GOUV_FR.innerHTML = GOUV_FR_options_str;
+            div_GOUV_FR.appendChild(sel_GOUV_FR);
+            var lab_GOUV_FR = document.createElement('div');
+            lab_GOUV_FR.innerHTML = 'GOUV_FR';
+            lab_GOUV_FR.className = 'filterLabel';
+            div_GOUV_FR.appendChild(lab_GOUV_FR);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_N = document.createElement('div');
+            div_N.id = "div_NÃ¸";
+            div_N.className= "filterselect";
+            document.getElementById("menu").appendChild(div_N);
+            sel_N = document.createElement('select');
+            sel_N.multiple = true;
+            sel_N.id = "sel_NÃ¸";
+            var N_options_str = "<option value='' unselected></option>";
+            sel_N.onchange = function(){filterFunc()};
+            N_options_str  += '<option value="OKTOR">OKTOR</option>';
+            N_options_str  += '<option value="GARCI">GARCI</option>';
+            N_options_str  += '<option value="Aqualine">Aqualine</option>';
+            N_options_str  += '<option value="Aziz">Aziz</option>';
+            N_options_str  += '<option value="Bulla Regia">Bulla Regia</option>';
+            N_options_str  += '<option value="Cristaline">Cristaline</option>';
+            N_options_str  += '<option value="Dima">Dima</option>';
+            N_options_str  += '<option value="Denya">Denya</option>';
+            N_options_str  += '<option value="Royale">Royale</option>';
+            N_options_str  += '<option value="Fourat">Fourat</option>';
+            N_options_str  += '<option value="Hayet">Hayet</option>';
+            N_options_str  += '<option value="Jannet">Jannet</option>';
+            N_options_str  += '<option value="Jektiss">Jektiss</option>';
+            N_options_str  += '<option value="Main">Main</option>';
+            N_options_str  += '<option value="Marwa">Marwa</option>';
+            N_options_str  += '<option value="Melina">Melina</option>';
+            N_options_str  += '<option value="Melliti">Melliti</option>';
+            N_options_str  += '<option value="Mira">Mira</option>';
+            N_options_str  += '<option value="Ovia">Ovia</option>';
+            N_options_str  += '<option value="Primaqua">Primaqua</option>';
+            N_options_str  += '<option value="Pristine">Pristine</option>';
+            N_options_str  += '<option value="Palma">Palma</option>';
+            N_options_str  += '<option value="Rayan">Rayan</option>';
+            N_options_str  += '<option value="Sabrine">Sabrine</option>';
+            N_options_str  += '<option value="Safia1">Safia1</option>';
+            N_options_str  += '<option value="Safia2">Safia2</option>';
+            N_options_str  += '<option value="Tijen">Tijen</option>';
+            N_options_str  += '<option value="Didon Elissa">Didon Elissa</option>';
+            sel_N.innerHTML = N_options_str;
+            div_N.appendChild(sel_N);
+            var lab_N = document.createElement('div');
+            lab_N.innerHTML = 'NÃ¸';
+            lab_N.className = 'filterLabel';
+            div_N.appendChild(lab_N);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Date_de_cr = document.createElement('div');
+            div_Date_de_cr.id = "div_Date_de_cr";
+            div_Date_de_cr.className= "filterselect";
+            document.getElementById("menu").appendChild(div_Date_de_cr);
+            sel_Date_de_cr = document.createElement('select');
+            sel_Date_de_cr.multiple = true;
+            sel_Date_de_cr.id = "sel_Date_de_cr";
+            var Date_de_cr_options_str = "<option value='' unselected></option>";
+            sel_Date_de_cr.onchange = function(){filterFunc()};
+            Date_de_cr_options_str  += '<option value="1904">1904</option>';
+            Date_de_cr_options_str  += '<option value="1900">1900</option>';
+            Date_de_cr_options_str  += '<option value="NULL">NULL</option>';
+            Date_de_cr_options_str  += '<option value="2014">2014</option>';
+            Date_de_cr_options_str  += '<option value="1999">1999</option>';
+            Date_de_cr_options_str  += '<option value="2009">2009</option>';
+            Date_de_cr_options_str  += '<option value="2018">2018</option>';
+            Date_de_cr_options_str  += '<option value="2016">2016</option>';
+            Date_de_cr_options_str  += '<option value="2003">2003</option>';
+            Date_de_cr_options_str  += '<option value="1996">1996</option>';
+            Date_de_cr_options_str  += '<option value="2001">2001</option>';
+            Date_de_cr_options_str  += '<option value="1978">1978</option>';
+            Date_de_cr_options_str  += '<option value="2004">2004</option>';
+            Date_de_cr_options_str  += '<option value="1993">1993</option>';
+            Date_de_cr_options_str  += '<option value="2007">2007</option>';
+            Date_de_cr_options_str  += '<option value="1940">1940</option>';
+            Date_de_cr_options_str  += '<option value="2005">2005</option>';
+            Date_de_cr_options_str  += '<option value="2011">2011</option>';
+            Date_de_cr_options_str  += '<option value="2012_ 2016">2012_ 2016</option>';
+            Date_de_cr_options_str  += '<option value="1991">1991</option>';
+            Date_de_cr_options_str  += '<option value="1968">1968</option>';
+            Date_de_cr_options_str  += '<option value="1992">1992</option>';
+            Date_de_cr_options_str  += '<option value="2019">2019</option>';
+            sel_Date_de_cr.innerHTML = Date_de_cr_options_str;
+            div_Date_de_cr.appendChild(sel_Date_de_cr);
+            var lab_Date_de_cr = document.createElement('div');
+            lab_Date_de_cr.innerHTML = 'Date_de_cr';
+            lab_Date_de_cr.className = 'filterLabel';
+            div_Date_de_cr.appendChild(lab_Date_de_cr);
+        </script>
+    </body>
+</html>
